@@ -1,0 +1,92 @@
+server {
+  listen  80;
+  return  301 https://canfly.org$request_uri;
+}
+
+upstream diaspora {
+	server          127.0.0.1:3000;
+} 
+
+upstream btsync {
+  server          127.0.0.1:8889;
+} 
+
+server {
+  listen 443 ssl spdy; # Same rules as for listen [::]:80 apply.
+  server_name canfly.org;
+  client_max_body_size 5M;
+  resolver 8.8.8.8; #127.0.0.1;
+  ssl_stapling on;
+  # SSL setup
+  ssl_certificate       ssl/ssl.crt;
+  ssl_certificate_key   ssl/ssl.key;
+  ssl_dhparam ssl/dhparam.pem;
+  ssl_session_cache shared:SSL:2m;
+  ssl_session_timeout 5m;
+  # Diffie-Hellman parameter for DHE ciphersuites, recommended 2048 bits
+  # enables server-side protection from BEAST attacks
+  # http://blog.ivanristic.com/2013/09/is-beast-still-a-threat.html
+  
+  # disable SSLv3(enabled by default since nginx 0.8.19) since it's less secure then TLS http://en.wikipedia.org/wiki/Secure_Sockets_Layer#SSL_3.0
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+  # ciphers chosen for forward secrecy and compatibility
+  # http://blog.ivanristic.com/2013/08/configuring-apache-nginx-and-openssl-for-forward-secrecy.html
+  #ssl_ciphers "EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA256:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:EECDH+aRSA+SHA384:EDH+aRSA+AESGCM:EDH+aRSA+SHA256:EDH+aRSA:EECDH:!aNULL:!eNULL:!MEDIUM:!LOW:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS:!RC4:!SEED";
+  ssl_ciphers "kEECDH+AES128:kEECDH:kEDH:-3DES:kRSA+AES128:kEDH+3DES:DES-CBC3-SHA:!RC4:!aNULL:!eNULL:!MD5:!EXPORT:!LOW:!SEED:!CAMELLIA:!IDEA:!PSK:!SRP:!SSLv2;"
+  ssl_prefer_server_ciphers on;
+  # enable ocsp stapling (mechanism by which a site can convey certificate revocation information to visitors in a privacy-preserving, scalable manner)
+  # http://blog.mozilla.org/security/2013/07/29/ocsp-stapling-in-firefox/
+  
+  #ssl_trusted_certificate ssl/canfly.org.crt;
+  # config to enable HSTS(HTTP Strict Transport Security) https://developer.mozilla.org/en-US/docs/Security/HTTP_Strict_Transport_Security
+  # to avoid ssl stripping https://en.wikipedia.org/wiki/SSL_stripping#SSL_stripping
+  #add_header Strict-Transport-Security max-age=63072000;
+  add_header Strict-Transport-Security "max-age=31536000;";
+  add_header Content-Security-Policy-Report-Only "default-src https:; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:; font-src https: data:; report-uri /csp-report";
+  #add_header Strict-Transport-Security "max-age=31536000; includeSubdomains;"; 
+  #gzip on;
+  #gzip_min_length 1000;
+  #gzip_types application/json text/css application/x-javascript;
+  root /home/diaspora/diaspora/public;
+  #limit_req   zone=one  burst=1 nodelay;
+
+  location / {
+    try_files   $uri @diaspora;
+  }
+
+  location ~ ^/(assets)/  {
+    #root /home/diaspora/diaspora/public;
+    gzip_static on; # to serve pre-gzipped version
+    expires max;
+    add_header Cache-Control public;
+    autoindex on;
+  }
+
+  location = /robots.txt {
+    access_log off;
+    log_not_found off;
+  }
+
+  location @diaspora {
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto https;
+    proxy_set_header Host $http_host;
+    proxy_redirect off;
+    proxy_pass http://diaspora;
+  }
+
+}
+
+
+server {
+
+  listen 8080 ssl;
+  server_name canfly.org;
+  ssl_certificate       ssl/ssl.crt;
+  ssl_certificate_key   ssl/ssl.key;
+  location / {
+       include conf.d/acl.conf;
+       proxy_pass http://btsync;
+  }
+}
