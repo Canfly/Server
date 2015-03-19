@@ -1,16 +1,1 @@
-.ssl/
-nginx/ssl/canfly.org.ca-bundle
-
-nginx/ssl/ssl.key
-
-nginx/ssl/ssl.crt
-
-nginx/ssl/nginx.key
-
-nginx/ssl/nginx.crt
-
-nginx/ssl/dhparam.pem
-
-nginx/ssl/canfly.org.key
-
-nginx/ssl/canfly.org.crt
+nginx/ssl/
