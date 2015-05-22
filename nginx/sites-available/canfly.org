@@ -15,19 +15,24 @@ server {
   listen 443 ssl spdy; 
   server_name canfly.org;
   client_max_body_size 5M;
-  resolver 8.8.8.8; #127.0.0.1;
   ssl_stapling on;
+  ssl_stapling_verify on;
+  ssl_trusted_certificate ssl/ca-certs.pem;
+  resolver 8.8.8.8 8.8.4.4 valid=300s;
+  resolver_timeout 5s;
+
+  # ssl_stapling on;
   ssl on;
   ssl_certificate       ssl/canfly.org.crt;
   ssl_certificate_key   ssl/canfly.org.key;
   ssl_dhparam ssl/dhparam.pem;
-  ssl_session_timeout 24h;
-  ssl_session_cache shared:SSL:2m;
+  ssl_session_timeout 5m;
+  ssl_session_cache shared:SSL:10m;
   ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
   ssl_ciphers kEECDH+AES128:kEECDH:kEDH:-3DES:kRSA+AES128:kEDH+3DES:DES-CBC3-SHA:!RC4:!aNULL:!eNULL:!MD5:!EXPORT:!LOW:!SEED:!CAMELLIA:!IDEA:!PSK:!SRP:!SSLv2;
   ssl_prefer_server_ciphers on;
   add_header Strict-Transport-Security "max-age=31536000;";
-  add_header Content-Security-Policy-Report-Only "default-src https:; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:; font-src https: data:; report-uri /csp-report";
+  add_header Content-Security-Policy-Report-Only "default-src https:; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:; font-src https: data:; report-uri //cspbuilder.info/report/929117982508610234/noscripteval/;";
 
   root /home/diaspora/diaspora/public;
   #limit_req   zone=one  burst=1 nodelay;
@@ -44,10 +49,6 @@ server {
     autoindex on;
   }
 
-  location = /robots.txt {
-    access_log off;
-    log_not_found off;
-  }
 
   location @diaspora {
     proxy_set_header X-Real-IP $remote_addr;
@@ -58,17 +59,4 @@ server {
     proxy_pass http://diaspora;
   }
 
-}
-
-
-server {
-
-  listen 8080 ssl;
-  server_name canfly.org;
-  ssl_certificate       ssl/canfly.org.crt;
-  ssl_certificate_key   ssl/canfly.org.key;
-  location / {
-       include conf.d/acl.conf;
-       proxy_pass http://btsync;
-  }
 }
