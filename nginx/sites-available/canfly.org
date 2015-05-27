@@ -7,17 +7,13 @@ upstream diaspora {
 	server          127.0.0.1:3000;
 } 
 
-upstream btsync {
-  server          127.0.0.1:8889;
-} 
-
 server {
-  listen 443 ssl spdy; 
+  listen 443 ssl ; #spdy; 
   server_name canfly.org;
   client_max_body_size 5M;
   ssl_stapling on;
   ssl_stapling_verify on;
-  ssl_trusted_certificate ssl/ca-certs.pem;
+  ssl_trusted_certificate /usr/local/etc/openssl/cert.pem;
   resolver 8.8.8.8 8.8.4.4 valid=300s;
   resolver_timeout 5s;
 
@@ -34,29 +30,34 @@ server {
   add_header Strict-Transport-Security "max-age=31536000;";
   add_header Content-Security-Policy-Report-Only "default-src https:; script-src https: 'unsafe-eval' 'unsafe-inline'; style-src https: 'unsafe-inline'; img-src https: data:; font-src https: data:; report-uri //cspbuilder.info/report/929117982508610234/noscripteval/;";
 
-  root /home/diaspora/diaspora/public;
+  root /Users/adiom/Documents/Canfly/amalgama/public;
   #limit_req   zone=one  burst=1 nodelay;
+  #location /uploads/ {
+  #  internal;
+  #  alias   /Users/adiom/Documents/Canfly/amalgama/public/uploads/;
+  #}
 
-  location / {
-    try_files   $uri @diaspora;
-  }
-
-  location ~ ^/(assets)/  {
-    #root /home/diaspora/diaspora/public;
-    gzip_static on; # to serve pre-gzipped version
+  location ^~ /assets/ {
+    gzip_static on;
     expires max;
     add_header Cache-Control public;
-    autoindex on;
   }
 
+  
+  location / {
+    proxy_redirect off;
 
-  location @diaspora {
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_set_header X-Forwarded-Proto https;
     proxy_set_header Host $http_host;
-    proxy_redirect off;
+    #proxy_set_header X-Sendfile-Type X-Accel-Redirect;
+    #proxy_set_header  X-Accel-Mapping /Users/adiom/Documents/Canfly/amalgama/public/uploads/=/uploads/;
     proxy_pass http://diaspora;
+      
+
   }
+
+
 
 }
