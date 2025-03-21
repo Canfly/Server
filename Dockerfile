@@ -51,16 +51,23 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'echo "Content of auth file: $(cat /etc/nginx/.htpasswd)"' >> /start.sh && \
     echo '# Создаем директорию для логов и тестовые файлы логов' >> /start.sh && \
     echo 'mkdir -p /var/log/nginx' >> /start.sh && \
-    echo 'touch /var/log/nginx/access.log' >> /start.sh && \
-    echo 'touch /var/log/nginx/error.log' >> /start.sh && \
-    echo 'echo "This is a test access log entry from $(date)" > /var/log/nginx/access.log' >> /start.sh && \
-    echo 'echo "This is a test error log entry from $(date)" > /var/log/nginx/error.log' >> /start.sh && \
-    echo 'chmod 755 /var/log/nginx' >> /start.sh && \
+    echo 'cat /dev/null > /var/log/nginx/access.log' >> /start.sh && \
+    echo 'cat /dev/null > /var/log/nginx/error.log' >> /start.sh && \
+    echo 'echo "This is a test access log entry from $(date)" >> /var/log/nginx/access.log' >> /start.sh && \
+    echo 'echo "This is a test error log entry from $(date)" >> /var/log/nginx/error.log' >> /start.sh && \
+    echo 'echo "Additional access log entry for testing" >> /var/log/nginx/access.log' >> /start.sh && \
+    echo 'echo "Additional error log entry for testing" >> /var/log/nginx/error.log' >> /start.sh && \
+    echo 'chmod -R 755 /var/log/nginx' >> /start.sh && \
     echo 'chmod 644 /var/log/nginx/access.log' >> /start.sh && \
     echo 'chmod 644 /var/log/nginx/error.log' >> /start.sh && \
     echo 'chown -R nginx:nginx /var/log/nginx' >> /start.sh && \
+    echo 'ln -sf /dev/stdout /var/log/nginx/access.log.pipe' >> /start.sh && \
+    echo 'ln -sf /dev/stderr /var/log/nginx/error.log.pipe' >> /start.sh && \
     echo 'echo "Log files created and permissions set:"' >> /start.sh && \
     echo 'ls -la /var/log/nginx/' >> /start.sh && \
+    echo 'cat /var/log/nginx/access.log' >> /start.sh && \
+    echo 'echo "Error log content:"' >> /start.sh && \
+    echo 'cat /var/log/nginx/error.log' >> /start.sh && \
     echo 'exec nginx -g "daemon off;"' >> /start.sh && \
     chmod +x /start.sh
 
