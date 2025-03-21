@@ -13,6 +13,14 @@ ENV PORT=8080
 # Установка необходимых пакетов для htpasswd и envsubst
 RUN apk add --no-cache apache2-utils gettext
 
+# Создаем директории для логов и назначаем правильные права
+RUN mkdir -p /var/log/nginx-logs && \
+    touch /var/log/nginx-logs/access.log && \
+    touch /var/log/nginx-logs/error.log && \
+    chmod 644 /var/log/nginx-logs/access.log && \
+    chmod 644 /var/log/nginx-logs/error.log && \
+    chown -R nginx:nginx /var/log/nginx-logs
+
 # Создаем скрипт запуска для динамического изменения порта
 RUN echo '#!/bin/sh' > /start.sh && \
     echo 'sed -i -E "s/listen [0-9]+/listen $PORT/g" /etc/nginx/conf.d/default.conf' >> /start.sh && \
