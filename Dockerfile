@@ -49,6 +49,18 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'fi' >> /start.sh && \
     echo 'echo "Created auth file: $(ls -la /etc/nginx/.htpasswd)"' >> /start.sh && \
     echo 'echo "Content of auth file: $(cat /etc/nginx/.htpasswd)"' >> /start.sh && \
+    echo '# Создаем директорию для логов и тестовые файлы логов' >> /start.sh && \
+    echo 'mkdir -p /var/log/nginx' >> /start.sh && \
+    echo 'touch /var/log/nginx/access.log' >> /start.sh && \
+    echo 'touch /var/log/nginx/error.log' >> /start.sh && \
+    echo 'echo "This is a test access log entry from $(date)" > /var/log/nginx/access.log' >> /start.sh && \
+    echo 'echo "This is a test error log entry from $(date)" > /var/log/nginx/error.log' >> /start.sh && \
+    echo 'chmod 755 /var/log/nginx' >> /start.sh && \
+    echo 'chmod 644 /var/log/nginx/access.log' >> /start.sh && \
+    echo 'chmod 644 /var/log/nginx/error.log' >> /start.sh && \
+    echo 'chown -R nginx:nginx /var/log/nginx' >> /start.sh && \
+    echo 'echo "Log files created and permissions set:"' >> /start.sh && \
+    echo 'ls -la /var/log/nginx/' >> /start.sh && \
     echo 'exec nginx -g "daemon off;"' >> /start.sh && \
     chmod +x /start.sh
 
