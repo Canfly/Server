@@ -2,3 +2,7 @@ nginx/ssl/
 *.sublime-*
 *.default
 .DS_Store
+*.log
+node_modules
+.railway
+.env
