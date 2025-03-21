@@ -31,8 +31,6 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo '  echo "WARNING: LOGS_USER or LOGS_PASSWORD not set. Using default credentials."' >> /start.sh && \
     echo '  htpasswd -bc /etc/nginx/.htpasswd "admin" "admin"' >> /start.sh && \
     echo 'fi' >> /start.sh && \
-    echo '# Ограничиваем число рабочих процессов до 2 для экономии ресурсов' >> /start.sh && \
-    echo 'sed -i "s/worker_processes auto;/worker_processes 2;/" /etc/nginx/nginx.conf' >> /start.sh && \
     echo 'exec nginx -g "daemon off;"' >> /start.sh && \
     chmod +x /start.sh
 
