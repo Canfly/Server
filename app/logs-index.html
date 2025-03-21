@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Logs</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .log-files {
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .log-files a {
+            display: block;
+            margin: 10px 0;
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .log-files a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Server Logs</h1>
+    <div class="log-files">
+        <p>Main log files:</p>
+        <a href="access.log">access.log</a>
+        <a href="error.log">error.log</a>
+        <p>Debug routes:</p>
+        <a href="/canfly_api_test_42xyz" target="_blank">Тестовый API-маршрут</a>
+        <a href="/debug" target="_blank">Проверка Debug</a>
+    </div>
+</body>
+</html> 
