@@ -70,7 +70,7 @@ chmod +x railway-deploy.sh
 
 ### Пример переадресации
 
-- Запрос к `https://mail.fillin.moscow` будет автоматически перенаправлен на `https://fillin.moscow/i/mail`
+- Запрос к `https://mail.canfly.org` будет автоматически перенаправлен на `https://canfly.org/i/mail`
 - Аналогично работает для любых других поддоменов
 
 ## Настройка существующего проекта
@@ -137,11 +137,11 @@ LOGS_PASSWORD=secure_password
 Пример доступа через curl:
 
 ```bash
-curl -u $LOGS_USER:$LOGS_PASSWORD https://fillin.moscow/logs/access.log
+curl -u $LOGS_USER:$LOGS_PASSWORD https://canfly.org/logs/access.log
 ```
 
 Пример скачивания файла логов:
 
 ```bash
-wget --user=$LOGS_USER --password=$LOGS_PASSWORD https://fillin.moscow/logs/access.log
+wget --user=$LOGS_USER --password=$LOGS_PASSWORD https://canfly.org/logs/access.log
 ``` 
