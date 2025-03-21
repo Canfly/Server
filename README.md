@@ -100,3 +100,48 @@ railway up
 ## Лицензия
 
 MIT 
+
+## Доступ к логам
+
+В проекте настроен защищенный доступ к логам Nginx через Basic Authentication.
+
+### Настройка через переменные окружения
+
+Для корректной работы необходимо установить следующие переменные окружения:
+
+- `LOGS_USER`: имя пользователя для доступа к логам (по умолчанию `admin`)
+- `LOGS_PASSWORD`: пароль для доступа к логам (по умолчанию `admin`, рекомендуется сменить)
+
+#### Локальная настройка
+
+Для локальной разработки создайте файл `.env` в корне проекта:
+
+```
+LOGS_USER=admin
+LOGS_PASSWORD=secure_password
+```
+
+#### Настройка в Railway
+
+Для продакшн-среды установите переменные окружения через Railway Dashboard:
+
+1. Перейдите в [Railway Dashboard](https://railway.app)
+2. Выберите проект
+3. Перейдите в раздел "Variables"
+4. Добавьте переменные `LOGS_USER` и `LOGS_PASSWORD`
+
+### Доступ к логам
+
+Доступ к логам осуществляется по URL `/logs/` с использованием Basic Authentication.
+
+Пример доступа через curl:
+
+```bash
+curl -u $LOGS_USER:$LOGS_PASSWORD https://fillin.moscow/logs/access.log
+```
+
+Пример скачивания файла логов:
+
+```bash
+wget --user=$LOGS_USER --password=$LOGS_PASSWORD https://fillin.moscow/logs/access.log
+``` 
