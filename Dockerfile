@@ -67,6 +67,13 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'cat /var/log/nginx/access.log' >> /start.sh && \
     echo 'echo "Error log content:"' >> /start.sh && \
     echo 'cat /var/log/nginx/error.log' >> /start.sh && \
+    echo 'echo "Creating test HTTP log request..."' >> /start.sh && \
+    echo 'echo "GET /test/access HTTP/1.1" >> /var/log/nginx/access.log' >> /start.sh && \
+    echo 'echo "File permissions on key paths:"' >> /start.sh && \
+    echo 'ls -la /var/log' >> /start.sh && \
+    echo 'ls -la /var' >> /start.sh && \
+    echo 'echo "Testing file access:"' >> /start.sh && \
+    echo 'nginx -t' >> /start.sh && \
     echo 'exec nginx -g "daemon off;"' >> /start.sh && \
     chmod +x /start.sh
 
