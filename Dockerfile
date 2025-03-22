@@ -17,9 +17,9 @@ RUN apk add --no-cache apache2-utils gettext
 RUN mkdir -p /var/log/nginx && \
     echo "This is a test access log entry" > /var/log/nginx/access.log && \
     echo "This is a test error log entry" > /var/log/nginx/error.log && \
-    chmod 755 /var/log/nginx && \
-    chmod 644 /var/log/nginx/access.log && \
-    chmod 644 /var/log/nginx/error.log && \
+    chmod -R 777 /var/log/nginx && \
+    chmod 666 /var/log/nginx/access.log && \
+    chmod 666 /var/log/nginx/error.log && \
     chown -R nginx:nginx /var/log/nginx && \
     # Добавим тестовый htpasswd файл для базовой аутентификации
     htpasswd -bc /etc/nginx/.htpasswd admin admin
@@ -30,6 +30,10 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'echo "PORT: $PORT"' >> /start.sh && \
     echo 'echo "HOSTNAME: $(hostname)"' >> /start.sh && \
     echo 'echo "LOGS_USER: $LOGS_USER"' >> /start.sh && \
+    echo 'echo "Checking config file with md5sum:"' >> /start.sh && \
+    echo 'md5sum /etc/nginx/conf.d/default.conf' >> /start.sh && \
+    echo 'echo "Validating config file syntax:"' >> /start.sh && \
+    echo 'nginx -t' >> /start.sh && \
     echo 'echo "Listing /etc/nginx:"' >> /start.sh && \
     echo 'ls -la /etc/nginx/' >> /start.sh && \
     echo 'echo "Listing conf.d:"' >> /start.sh && \
@@ -55,9 +59,9 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'echo "Additional access log entry for testing" >> /var/log/nginx/access.log' >> /start.sh && \
     echo 'echo "This is a test error log entry from $(date)" > /var/log/nginx/error.log' >> /start.sh && \
     echo 'echo "Additional error log entry for testing" >> /var/log/nginx/error.log' >> /start.sh && \
-    echo 'chmod -R 755 /var/log/nginx' >> /start.sh && \
-    echo 'chmod 644 /var/log/nginx/access.log' >> /start.sh && \
-    echo 'chmod 644 /var/log/nginx/error.log' >> /start.sh && \
+    echo 'chmod -R 777 /var/log/nginx' >> /start.sh && \
+    echo 'chmod 666 /var/log/nginx/access.log' >> /start.sh && \
+    echo 'chmod 666 /var/log/nginx/error.log' >> /start.sh && \
     echo 'cp -f /var/log/nginx/access.log /var/log/nginx/access.log.orig' >> /start.sh && \
     echo 'cp -f /var/log/nginx/error.log /var/log/nginx/error.log.orig' >> /start.sh && \
     echo 'chown -R nginx:nginx /var/log/nginx' >> /start.sh && \
