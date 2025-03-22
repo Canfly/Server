@@ -41,6 +41,12 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo '  htpasswd -bc /etc/nginx/.htpasswd admin admin' >> /start.sh && \
     echo 'fi' >> /start.sh && \
     echo 'mkdir -p /var/log/nginx' >> /start.sh && \
+    echo 'if [ -L /var/log/nginx/access.log ]; then' >> /start.sh && \
+    echo '  rm /var/log/nginx/access.log' >> /start.sh && \
+    echo 'fi' >> /start.sh && \
+    echo 'if [ -L /var/log/nginx/error.log ]; then' >> /start.sh && \
+    echo '  rm /var/log/nginx/error.log' >> /start.sh && \
+    echo 'fi' >> /start.sh && \
     echo 'echo "=== Creating log files ===" > /var/log/nginx/access.log' >> /start.sh && \
     echo 'echo "Server started at $(date)" >> /var/log/nginx/access.log' >> /start.sh && \
     echo 'echo "Test log entry" >> /var/log/nginx/access.log' >> /start.sh && \
