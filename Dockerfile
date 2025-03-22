@@ -29,55 +29,30 @@ RUN echo '#!/bin/sh' > /start.sh && \
     echo 'echo "=== DEBUG INFO START ==="' >> /start.sh && \
     echo 'echo "PORT: $PORT"' >> /start.sh && \
     echo 'echo "HOSTNAME: $(hostname)"' >> /start.sh && \
-    echo 'echo "LOGS_USER: $LOGS_USER"' >> /start.sh && \
-    echo 'echo "Checking config file with md5sum:"' >> /start.sh && \
-    echo 'md5sum /etc/nginx/conf.d/default.conf' >> /start.sh && \
     echo 'echo "Validating config file syntax:"' >> /start.sh && \
     echo 'nginx -t' >> /start.sh && \
-    echo 'echo "Listing /etc/nginx:"' >> /start.sh && \
-    echo 'ls -la /etc/nginx/' >> /start.sh && \
-    echo 'echo "Listing conf.d:"' >> /start.sh && \
-    echo 'ls -la /etc/nginx/conf.d/' >> /start.sh && \
-    echo 'echo "Content of default.conf:"' >> /start.sh && \
-    echo 'cat /etc/nginx/conf.d/default.conf' >> /start.sh && \
     echo 'echo "=== DEBUG INFO END ==="' >> /start.sh && \
     echo 'sed -i -E "s/listen [0-9]+/listen $PORT/g" /etc/nginx/conf.d/default.conf' >> /start.sh && \
-    echo 'echo "Creating htpasswd file with default admin:admin credentials..."' >> /start.sh && \
-    echo 'htpasswd -bc /etc/nginx/.htpasswd admin admin' >> /start.sh && \
     echo 'if [ ! -z "$LOGS_USER" ] && [ ! -z "$LOGS_PASSWORD" ]; then' >> /start.sh && \
     echo '  echo "Setting up Basic Auth with custom credentials: $LOGS_USER"' >> /start.sh && \
     echo '  htpasswd -bc /etc/nginx/.htpasswd "$LOGS_USER" "$LOGS_PASSWORD"' >> /start.sh && \
-    echo '  echo "Basic Auth credentials updated."' >> /start.sh && \
     echo 'else' >> /start.sh && \
-    echo '  echo "WARNING: LOGS_USER or LOGS_PASSWORD not set. Using default admin:admin."' >> /start.sh && \
+    echo '  echo "Using default admin:admin credentials"' >> /start.sh && \
+    echo '  htpasswd -bc /etc/nginx/.htpasswd admin admin' >> /start.sh && \
     echo 'fi' >> /start.sh && \
-    echo 'echo "Created auth file: $(ls -la /etc/nginx/.htpasswd)"' >> /start.sh && \
-    echo 'echo "Content of auth file: $(cat /etc/nginx/.htpasswd)"' >> /start.sh && \
-    echo '# Создаем директорию для логов и тестовые файлы логов' >> /start.sh && \
     echo 'mkdir -p /var/log/nginx' >> /start.sh && \
-    echo 'echo "This is a test access log entry from $(date)" > /var/log/nginx/access.log' >> /start.sh && \
-    echo 'echo "Additional access log entry for testing" >> /var/log/nginx/access.log' >> /start.sh && \
-    echo 'echo "This is a test error log entry from $(date)" > /var/log/nginx/error.log' >> /start.sh && \
-    echo 'echo "Additional error log entry for testing" >> /var/log/nginx/error.log' >> /start.sh && \
+    echo 'echo "=== Creating log files ===" > /var/log/nginx/access.log' >> /start.sh && \
+    echo 'echo "Server started at $(date)" >> /var/log/nginx/access.log' >> /start.sh && \
+    echo 'echo "Test log entry" >> /var/log/nginx/access.log' >> /start.sh && \
+    echo 'echo "=== Creating log files ===" > /var/log/nginx/error.log' >> /start.sh && \
+    echo 'echo "Server started at $(date)" >> /var/log/nginx/error.log' >> /start.sh && \
+    echo 'echo "Test error entry" >> /var/log/nginx/error.log' >> /start.sh && \
     echo 'chmod -R 777 /var/log/nginx' >> /start.sh && \
     echo 'chmod 666 /var/log/nginx/access.log' >> /start.sh && \
     echo 'chmod 666 /var/log/nginx/error.log' >> /start.sh && \
-    echo 'cp -f /var/log/nginx/access.log /var/log/nginx/access.log.orig' >> /start.sh && \
-    echo 'cp -f /var/log/nginx/error.log /var/log/nginx/error.log.orig' >> /start.sh && \
     echo 'chown -R nginx:nginx /var/log/nginx' >> /start.sh && \
-    echo 'echo "Log files created and permissions set:"' >> /start.sh && \
+    echo 'echo "Log files created:"' >> /start.sh && \
     echo 'ls -la /var/log/nginx/' >> /start.sh && \
-    echo 'echo "Access log content:"' >> /start.sh && \
-    echo 'cat /var/log/nginx/access.log' >> /start.sh && \
-    echo 'echo "Error log content:"' >> /start.sh && \
-    echo 'cat /var/log/nginx/error.log' >> /start.sh && \
-    echo 'echo "Creating test HTTP log request..."' >> /start.sh && \
-    echo 'echo "GET /test/access HTTP/1.1" >> /var/log/nginx/access.log' >> /start.sh && \
-    echo 'echo "File permissions on key paths:"' >> /start.sh && \
-    echo 'ls -la /var/log' >> /start.sh && \
-    echo 'ls -la /var' >> /start.sh && \
-    echo 'echo "Testing file access:"' >> /start.sh && \
-    echo 'nginx -t' >> /start.sh && \
     echo 'exec nginx -g "daemon off;"' >> /start.sh && \
     chmod +x /start.sh
 
